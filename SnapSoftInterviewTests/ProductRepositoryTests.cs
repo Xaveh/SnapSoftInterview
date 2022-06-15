@@ -26,4 +26,24 @@ public class ProductRepositoryTests
 
         await Assert.ThrowsAsync<OverflowException>(() => _productRepository.CalculateAAsync(input));
     }
+
+    [Theory]
+    [InlineData(new int[] { 1, 2, 3, 4 }, new int[] { 24, 12, 8, 6 })]
+    [InlineData(new int[] { 1, 2, 0, 4 }, new int[] { 0, 0, 0, 0 })]
+    [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
+    public async Task CalculateBHappyPath(int[] input, int[] expectedOutput)
+    {
+        var result = await _productRepository.CalculateBAsync(new ProductInput(input));
+
+        Assert.NotNull(result);
+        Assert.Equal(expectedOutput, result);
+    }
+
+    [Fact]
+    public async Task CalculateBExceptionalScenario()
+    {
+        var input = new ProductInput(new int[] { int.MaxValue, 2, 3 });
+
+        await Assert.ThrowsAsync<OverflowException>(() => _productRepository.CalculateBAsync(input));
+    }
 }

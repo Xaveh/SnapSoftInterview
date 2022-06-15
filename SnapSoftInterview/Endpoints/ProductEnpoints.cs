@@ -27,8 +27,15 @@ public static class ProductEnpoints
 
     internal static async Task<IResult> CalculateBAsync(IProductRepository repository, ProductInput input)
     {
-        var output = await repository.CalculateBAsync(input);
-        return output is not null ? Results.Ok(output) : Results.BadRequest();
+        try
+        {
+            var output = await repository.CalculateBAsync(input);
+            return output is not null ? Results.Ok(output) : Results.BadRequest();
+        }
+        catch (Exception e)
+        {
+            return Results.BadRequest(e.Message);
+        }
     }
 
     internal static async Task<IResult> CalculateCAsync(IProductRepository repository, ProductInput input)
