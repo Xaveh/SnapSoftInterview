@@ -11,6 +11,7 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, 2, 3, 4 }, new int[] { 24, 12, 8, 6 })]
     [InlineData(new int[] { 1, 2, 0, 4 }, new int[] { 0, 0, 0, 0 })]
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
+    [InlineData(new int[] { int.MinValue / 2, 2, 2 }, new int[] { 4, int.MinValue, int.MinValue })]
     public async Task CalculateAHappyPath(int[] input, int[] expectedOutput)
     {
         var product = new Product() { Input = input };
@@ -34,9 +35,10 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, 2, 3, 4 }, new int[] { 24, 12, 8, 6 })]
     [InlineData(new int[] { 1, 2, 0, 4 }, new int[] { 0, 0, 0, 0 })]
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
+    [InlineData(new int[] { int.MinValue / 2, 2, 2 }, new int[] { 4, int.MinValue, int.MinValue })]
     public async Task CalculateBHappyPath(int[] input, int[] expectedOutput)
     {
-        var product = new Product () { Input = input };
+        var product = new Product() { Input = input };
         await _productRepository.CalculateBAsync(product);
 
         Assert.Equal(expectedOutput, product.Output);
@@ -57,6 +59,7 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, 2, 3, 4 }, new int[] { 24, 12, 8, 6 })]
     [InlineData(new int[] { 1, 2, 0, 4 }, new int[] { 0, 0, 0, 0 })]
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
+    [InlineData(new int[] { int.MinValue / 2, 2, 2 }, new int[] { 4, int.MinValue, int.MinValue })]
     public async Task CalculateCHappyPath(int[] input, int[] expectedOutput)
     {
         var product = new Product() { Input = input };
