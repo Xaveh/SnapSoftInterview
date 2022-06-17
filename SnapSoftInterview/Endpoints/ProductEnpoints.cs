@@ -57,7 +57,7 @@ public static class ProductEnpoints
         }
     }
 
-    internal static async Task<IResult> GetProductsAsync(IProductRepository repository, IMapper mapper, string filter)
+    internal static async Task<IResult> GetProductsAsync(IProductRepository repository, IMapper mapper, string? filter)
     {
         try
         {

@@ -66,17 +66,21 @@ public class ProductRepository : IProductRepository
         });
     }
 
-    public async Task<IEnumerable<Product>> GetProductsAsync(string filter)
+    public async Task<IEnumerable<Product>> GetProductsAsync(string? filter)
     {
         try
         {
             using (var context = new ProductContext())
             {
-                var products = await context.Products.AsNoTracking()
-                    .Where(x => x.Comment.Contains(filter))
+                if (string.IsNullOrEmpty(filter))
+                {
+                    return await context.Products.AsNoTracking()
                     .ToListAsync();
+                }
 
-                return products;
+                return await context.Products.AsNoTracking()
+                     .Where(x => x.Comment.Contains(filter))
+                     .ToListAsync();
             }
         }
         catch (Exception e)
