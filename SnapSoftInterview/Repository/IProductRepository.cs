@@ -4,10 +4,10 @@ namespace SnapSoftInterview.Repository;
 
 public interface IProductRepository
 {
-    Task<int[]> CalculateAAsync(ProductInput input);
+    Task CalculateAAsync(Product input);
 
-    Task<int[]> CalculateBAsync(ProductInput input);
+    Task CalculateBAsync(Product input);
 
-    Task<int[]> CalculateCAsync(ProductInput input);
+    Task CalculateCAsync(Product input);
 }
 

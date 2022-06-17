@@ -4,54 +4,57 @@ namespace SnapSoftInterview.Repository;
 
 public class ProductRepository : IProductRepository
 {
-    private static readonly Func<IEnumerable<int>, int> CalculateProduct = (input) => input.Aggregate(1, (actualProduct, next) => checked(actualProduct * next));
+    private static readonly Func<IEnumerable<int>, int> CalculateProductValue = (input) => input.Aggregate(1, (actualProduct, next) => checked(actualProduct * next));
 
-    public async Task<int[]> CalculateAAsync(ProductInput input)
+    public async Task CalculateAAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(() =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                return;
             }
 
-            int product = CalculateProduct(input.value);
+            int productValue = CalculateProductValue(product.Input);
 
-            return input.value.Select(x => product / x).ToArray();
+            product.Output = product.Input.Select(x => productValue / x).ToArray();
         });
     }
 
-    public async Task<int[]> CalculateBAsync(ProductInput input)
+    public async Task CalculateBAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(() =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                return;
             }
 
-            var result = new int[input.value.Length];
-            for (int i = 0; i < input.value.Length; i++)
+            var result = new int[product.Input.Length];
+            for (int i = 0; i < product.Input.Length; i++)
             {
-                result[i] = CalculateProduct(input.value.Select((x, index) => i != index ? x : 1));
+                result[i] = CalculateProductValue(product.Input.Select((x, index) => i != index ? x : 1));
             }
 
-            return result;
+            product.Output = result;
         });
     }
 
-    public async Task<int[]> CalculateCAsync(ProductInput input)
+    public async Task CalculateCAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(() =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                return;
             }
 
-            int product = CalculateProduct(input.value);
+            int productValue = CalculateProductValue(product.Input);
 
-            return input.value.Select(x => product.CheatDivide(x)).ToArray();
+            product.Output = product.Input.Select(x => productValue.CheatDivide(x)).ToArray();
         });
     }
 }
