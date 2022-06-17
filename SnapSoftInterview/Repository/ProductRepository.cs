@@ -90,6 +90,7 @@ public class ProductRepository : IProductRepository
     {
         try
         {
+            product.TimeStamp = DateTime.Now.ToString();
             using (var context = new ProductContext())
             {
                 await context.Products.AddAsync(product);

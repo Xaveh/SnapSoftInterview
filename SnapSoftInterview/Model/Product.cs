@@ -9,4 +9,6 @@ public class Product
     public int[] Output { get; set; }
 
     public string Comment { get; set; }
+
+    public string TimeStamp { get; set; }
 }
