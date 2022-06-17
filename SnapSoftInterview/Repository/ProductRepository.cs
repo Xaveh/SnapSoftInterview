@@ -1,4 +1,5 @@
-﻿using SnapSoftInterview.Model;
+﻿using SnapSoftInterview.DAL;
+using SnapSoftInterview.Model;
 
 namespace SnapSoftInterview.Repository;
 
@@ -13,12 +14,14 @@ public class ProductRepository : IProductRepository
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                LogProduct(product);
                 return;
             }
 
             int productValue = CalculateProductValue(product.Input);
 
             product.Output = product.Input.Select(x => productValue / x).ToArray();
+            LogProduct(product);
         });
     }
 
@@ -29,6 +32,7 @@ public class ProductRepository : IProductRepository
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                LogProduct(product);
                 return;
             }
 
@@ -39,6 +43,7 @@ public class ProductRepository : IProductRepository
             }
 
             product.Output = result;
+            LogProduct(product);
         });
     }
 
@@ -49,12 +54,14 @@ public class ProductRepository : IProductRepository
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                LogProduct(product);
                 return;
             }
 
             int productValue = CalculateProductValue(product.Input);
 
             product.Output = product.Input.Select(x => productValue.CheatDivide(x)).ToArray();
+            LogProduct(product);
         });
     }
 
@@ -65,14 +72,30 @@ public class ProductRepository : IProductRepository
             return new List<Product>();
         });
     }
+
+    public async Task LogProduct(Product product)
+    {
+        try
+        {
+            using (var context = new ProductContext())
+            {
+                await context.Products.AddAsync(product);
+                await context.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error while saving product log: {e.Message}");
+        }
+    }
 }
 
 internal static class HelperExtensionMethods
 {
     internal static int CheatDivide(this int numerator, int denominator)
     {
-        ulong numeratorUlong = numerator > 0 ? Convert.ToUInt64(numerator) : Convert.ToUInt64(-numerator);
-        ulong denominatorUlong = denominator > 0 ? Convert.ToUInt64(denominator) : Convert.ToUInt64(-denominator);
+        ulong numeratorUlong = Convert.ToUInt64(Math.Abs(numerator));
+        ulong denominatorUlong = Convert.ToUInt64(Math.Abs(denominator));
 
         ulong result = 0; ulong mask = 1;
         while (numeratorUlong >= denominatorUlong)
