@@ -1,4 +1,5 @@
-﻿using SnapSoftInterview.DAL;
+﻿using Microsoft.EntityFrameworkCore;
+using SnapSoftInterview.DAL;
 using SnapSoftInterview.Model;
 
 namespace SnapSoftInterview.Repository;
@@ -9,30 +10,30 @@ public class ProductRepository : IProductRepository
 
     public async Task CalculateAAsync(Product product)
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
-                LogProduct(product);
+                await LogProduct(product);
                 return;
             }
 
             int productValue = CalculateProductValue(product.Input);
 
             product.Output = product.Input.Select(x => productValue / x).ToArray();
-            LogProduct(product);
+            await LogProduct(product);
         });
     }
 
     public async Task CalculateBAsync(Product product)
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
-                LogProduct(product);
+                await LogProduct(product);
                 return;
             }
 
@@ -43,34 +44,46 @@ public class ProductRepository : IProductRepository
             }
 
             product.Output = result;
-            LogProduct(product);
+            await LogProduct(product);
         });
     }
 
     public async Task CalculateCAsync(Product product)
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             if (product.Input.Contains(0))
             {
                 product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
-                LogProduct(product);
+                await LogProduct(product);
                 return;
             }
 
             int productValue = CalculateProductValue(product.Input);
 
             product.Output = product.Input.Select(x => productValue.CheatDivide(x)).ToArray();
-            LogProduct(product);
+            await LogProduct(product);
         });
     }
 
     public async Task<IEnumerable<Product>> GetProductsAsync(string filter)
     {
-        return await Task.Run(() =>
+        try
         {
-            return new List<Product>();
-        });
+            using (var context = new ProductContext())
+            {
+                var products = await context.Products.AsNoTracking()
+                    .Where(x => x.Comment.Contains(filter))
+                    .ToListAsync();
+
+                return products;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error while querying products: {e.Message}");
+            return Enumerable.Empty<Product>();
+        }
     }
 
     public async Task LogProduct(Product product)

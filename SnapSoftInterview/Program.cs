@@ -19,4 +19,4 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapProductEnpoints();
 
-app.Run();
+app.Run("https://localhost:3000");
