@@ -13,16 +13,19 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
     public async Task CalculateAHappyPath(int[] input, int[] expectedOutput)
     {
-        var result = await _productRepository.CalculateAAsync(new ProductInput(input));
+        var product = new Product() { Input = input };
+        await _productRepository.CalculateAAsync(product);
 
-        Assert.NotNull(result);
-        Assert.Equal(expectedOutput, result);
+        Assert.Equal(expectedOutput, product.Output);
     }
 
     [Fact]
     public async Task CalculateAExceptionalScenario()
     {
-        var input = new ProductInput(new int[] { int.MaxValue, 2, 3 });
+        var input = new Product
+        {
+            Input = new int[] { int.MaxValue, 2, 3 }
+        };
 
         await Assert.ThrowsAsync<OverflowException>(() => _productRepository.CalculateAAsync(input));
     }
@@ -33,16 +36,19 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
     public async Task CalculateBHappyPath(int[] input, int[] expectedOutput)
     {
-        var result = await _productRepository.CalculateBAsync(new ProductInput(input));
+        var product = new Product () { Input = input };
+        await _productRepository.CalculateBAsync(product);
 
-        Assert.NotNull(result);
-        Assert.Equal(expectedOutput, result);
+        Assert.Equal(expectedOutput, product.Output);
     }
 
     [Fact]
     public async Task CalculateBExceptionalScenario()
     {
-        var input = new ProductInput(new int[] { int.MaxValue, 2, 3 });
+        var input = new Product
+        {
+            Input = new int[] { int.MaxValue, 2, 3 }
+        };
 
         await Assert.ThrowsAsync<OverflowException>(() => _productRepository.CalculateBAsync(input));
     }
@@ -53,16 +59,19 @@ public class ProductRepositoryTests
     [InlineData(new int[] { 1, -2, 3, -4 }, new int[] { 24, -12, 8, -6 })]
     public async Task CalculateCHappyPath(int[] input, int[] expectedOutput)
     {
-        var result = await _productRepository.CalculateCAsync(new ProductInput(input));
+        var product = new Product() { Input = input };
+        await _productRepository.CalculateCAsync(product);
 
-        Assert.NotNull(result);
-        Assert.Equal(expectedOutput, result);
+        Assert.Equal(expectedOutput, product.Output);
     }
 
     [Fact]
     public async Task CalculateCExceptionalScenario()
     {
-        var input = new ProductInput(new int[] { int.MaxValue, 2, 3 });
+        var input = new Product
+        {
+            Input = new int[] { int.MaxValue, 2, 3 }
+        };
 
         await Assert.ThrowsAsync<OverflowException>(() => _productRepository.CalculateCAsync(input));
     }

@@ -4,6 +4,7 @@ using SnapSoftInterview.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 
@@ -18,4 +19,4 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapProductEnpoints();
 
-app.Run();
+app.Run("https://localhost:3000");

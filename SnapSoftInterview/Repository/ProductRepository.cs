@@ -1,58 +1,110 @@
-﻿using SnapSoftInterview.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using SnapSoftInterview.DAL;
+using SnapSoftInterview.Model;
 
 namespace SnapSoftInterview.Repository;
 
 public class ProductRepository : IProductRepository
 {
-    private static readonly Func<IEnumerable<int>, int> CalculateProduct = (input) => input.Aggregate(1, (actualProduct, next) => checked(actualProduct * next));
+    private static readonly Func<IEnumerable<int>, int> CalculateProductValue = (input) => input.Aggregate(1, (actualProduct, next) => checked(actualProduct * next));
 
-    public async Task<int[]> CalculateAAsync(ProductInput input)
+    public async Task CalculateAAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(async () =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                await LogProduct(product);
+                return;
             }
 
-            int product = CalculateProduct(input.value);
+            int productValue = CalculateProductValue(product.Input);
 
-            return input.value.Select(x => product / x).ToArray();
+            product.Output = product.Input.Select(x => productValue / x).ToArray();
+            await LogProduct(product);
         });
     }
 
-    public async Task<int[]> CalculateBAsync(ProductInput input)
+    public async Task CalculateBAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(async () =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                await LogProduct(product);
+                return;
             }
 
-            var result = new int[input.value.Length];
-            for (int i = 0; i < input.value.Length; i++)
+            var result = new int[product.Input.Length];
+            for (int i = 0; i < product.Input.Length; i++)
             {
-                result[i] = CalculateProduct(input.value.Select((x, index) => i != index ? x : 1));
+                result[i] = CalculateProductValue(product.Input.Select((x, index) => i != index ? x : 1));
             }
 
-            return result;
+            product.Output = result;
+            await LogProduct(product);
         });
     }
 
-    public async Task<int[]> CalculateCAsync(ProductInput input)
+    public async Task CalculateCAsync(Product product)
     {
-        return await Task.Run(() =>
+        await Task.Run(async () =>
         {
-            if (input.value.Contains(0))
+            if (product.Input.Contains(0))
             {
-                return Enumerable.Repeat(0, input.value.Length).ToArray();
+                product.Output = Enumerable.Repeat(0, product.Input.Length).ToArray();
+                await LogProduct(product);
+                return;
             }
 
-            int product = CalculateProduct(input.value);
+            int productValue = CalculateProductValue(product.Input);
 
-            return input.value.Select(x => product.CheatDivide(x)).ToArray();
+            product.Output = product.Input.Select(x => productValue.CheatDivide(x)).ToArray();
+            await LogProduct(product);
         });
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsAsync(string? filter)
+    {
+        try
+        {
+            using (var context = new ProductContext())
+            {
+                if (string.IsNullOrEmpty(filter))
+                {
+                    return await context.Products.AsNoTracking()
+                    .ToListAsync();
+                }
+
+                return await context.Products.AsNoTracking()
+                     .Where(x => x.Comment.Contains(filter))
+                     .ToListAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error while querying products: {e.Message}");
+            return Enumerable.Empty<Product>();
+        }
+    }
+
+    public async Task LogProduct(Product product)
+    {
+        try
+        {
+            product.TimeStamp = DateTime.Now.ToString();
+            using (var context = new ProductContext())
+            {
+                await context.Products.AddAsync(product);
+                await context.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error while saving product log: {e.Message}");
+        }
     }
 }
 
@@ -60,8 +112,8 @@ internal static class HelperExtensionMethods
 {
     internal static int CheatDivide(this int numerator, int denominator)
     {
-        ulong numeratorUlong = numerator > 0 ? Convert.ToUInt64(numerator) : Convert.ToUInt64(-numerator);
-        ulong denominatorUlong = denominator > 0 ? Convert.ToUInt64(denominator) : Convert.ToUInt64(-denominator);
+        ulong numeratorUlong = Convert.ToUInt64(Math.Abs(numerator));
+        ulong denominatorUlong = Convert.ToUInt64(Math.Abs(denominator));
 
         ulong result = 0; ulong mask = 1;
         while (numeratorUlong >= denominatorUlong)
