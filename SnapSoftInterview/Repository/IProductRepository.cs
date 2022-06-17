@@ -9,5 +9,7 @@ public interface IProductRepository
     Task CalculateBAsync(Product input);
 
     Task CalculateCAsync(Product input);
+
+    Task<IEnumerable<Product>> GetProductsAsync(string filter);
 }
 

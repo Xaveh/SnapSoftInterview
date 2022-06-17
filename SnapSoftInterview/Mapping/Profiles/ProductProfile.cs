@@ -11,6 +11,5 @@ public class ProductProfile : Profile
     {
         CreateMap<ProductInputDto, Product>();
         CreateMap<Product, ProductOutputDto>();
-        CreateMap<ProductFilterDto, Product>();
     }
 }

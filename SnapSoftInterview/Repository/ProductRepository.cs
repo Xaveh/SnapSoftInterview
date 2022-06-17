@@ -57,6 +57,14 @@ public class ProductRepository : IProductRepository
             product.Output = product.Input.Select(x => productValue.CheatDivide(x)).ToArray();
         });
     }
+
+    public async Task<IEnumerable<Product>> GetProductsAsync(string filter)
+    {
+        return await Task.Run(() =>
+        {
+            return new List<Product>();
+        });
+    }
 }
 
 internal static class HelperExtensionMethods
